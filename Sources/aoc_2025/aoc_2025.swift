@@ -1,0 +1,13 @@
+import ArgumentParser
+
+@main
+struct AoC2024: ParsableCommand {
+
+  static let configuration = CommandConfiguration(
+    commandName: "aoc_2025",
+    abstract: "Run AoC 2025",
+    subcommands: [
+      Day01.self,
+    ]
+  )
+}

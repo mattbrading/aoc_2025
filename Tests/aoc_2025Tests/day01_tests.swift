@@ -6,18 +6,21 @@ import Testing
 struct Day01Tests {
 
   let exampleInput = """
-    example input
+    L68
+    L30
+    R48
+    L5
+    R60
+    L55
+    L1
+    L99
+    R14
+    L82
     """
 
   @Test func part1() async throws {
     let result = Day01().part1(input: exampleInput)
 
-    #expect(result == "example input part 1")
-  }
-
-  @Test func part2() async throws {
-    let result = Day01().part2(input: exampleInput)
-
-    #expect(result == "example input part 2")
+    #expect(result == 3)
   }
 }

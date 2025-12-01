@@ -23,4 +23,21 @@ struct Day01Tests {
 
     #expect(result == 3)
   }
+
+  @Test func part2() async throws {
+    let result = Day01().part2(input: exampleInput)
+
+    #expect(result == 6)
+  }
+
+  @Test func part2_extreme() async throws {
+    let input = """
+      L1000
+      R1000
+      """
+
+    let result = Day01().part2(input: input)
+
+    #expect(result == 20)
+  }
 }

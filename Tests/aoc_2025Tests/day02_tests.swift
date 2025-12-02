@@ -16,4 +16,16 @@ struct Day02Tests {
 
     #expect(result == 1_227_775_554)
   }
+
+  @Test func part2() async throws {
+    let result = Day02().part2(input: exampleInput)
+
+    #expect(result == 4_174_379_265)
+  }
+
+  @Test func part2_handleSmallRange() async throws {
+    let result = Day02().part2(input: "1-15")
+
+    #expect(result == 11)
+  }
 }

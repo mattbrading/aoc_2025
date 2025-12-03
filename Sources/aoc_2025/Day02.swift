@@ -15,47 +15,35 @@ struct Day02: AdventDay {
       })
   }
 
+
   func part1(input: String) -> Int {
+    let possibleIds: [Int] = (1...99999).map({ Int(String($0) + String($0))! })
+
     let ranges = parseInput(input: input)
 
-    let sumInvalidIds = ranges.reduce(0) { runningTotal, range in
-      return range.reduce(runningTotal) { runningTotal, id in
-        let idStr = String(id)
-
-        let halfway = idStr.index(idStr.startIndex, offsetBy: idStr.count / 2)
-
-        return idStr[..<halfway] == idStr[halfway...] ? runningTotal + id : runningTotal
-
+    return possibleIds.reduce(0) {outerTotal, id in 
+      outerTotal + ranges.reduce(0) {innerTotal, range in 
+        range.contains(id) ? innerTotal + id : innerTotal
       }
     }
-    return sumInvalidIds
   }
 
   func part2(input: String) -> Int {
+
+    let possibleIds = Set((1...99999).flatMap({ base in
+      let maxRepeats = 10 / (Int(floor(log10(Double(base)))) + 1)
+      return (2...maxRepeats).compactMap({repeats in 
+        let possibleId = repeatElement(String(base), count: repeats).joined()
+        return Int(possibleId)
+      })
+    }))
+
     let ranges = parseInput(input: input)
 
-    let sumInvalidIds = ranges.reduce(0) { runningTotal, range in
-      return range.reduce(runningTotal) { runningTotal, id in
-        let idStr = String(id)
-
-        let divisors = (1...idStr.count / 2)
-          .filter({ idStr.count % $0 == 0 })
-
-        let isInvalidId = divisors.contains { divisor in
-          let splitPoint = idStr.index(idStr.startIndex, offsetBy: divisor)
-
-          let repeated = repeatElement(idStr[..<splitPoint], count: idStr.count / divisor)
-            .joined()
-
-          return idStr == repeated
-        }
-
-        return isInvalidId
-          ? runningTotal + id
-          : runningTotal
+    return possibleIds.reduce(0) {outerTotal, id in 
+      outerTotal + ranges.reduce(0) {innerTotal, range in 
+        range.contains(id) ? innerTotal + id : innerTotal
       }
     }
-
-    return sumInvalidIds
   }
 }

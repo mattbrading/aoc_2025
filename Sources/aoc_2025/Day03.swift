@@ -31,7 +31,26 @@ struct Day03: AdventDay {
     }
   }
 
+  func findMaxJoltage(bank: [Int], minLength: Int) -> Int {
+    if minLength == 1 {
+      return bank.max()!
+    }
+
+    let searchRange = bank[...(bank.endIndex-minLength)]
+
+    let nextDigit = searchRange.max()!
+    let nextDigitIdx = bank.firstIndex(of: nextDigit)!
+
+    let remainingDigits = Array(bank[(nextDigitIdx+1)...])
+
+    return Int(String(nextDigit) + String(findMaxJoltage(bank: remainingDigits, minLength: minLength - 1)))!
+    }
+
   func part2(input: String) -> Int {
-    0
+    let banks = parseInput(input: input)
+    return banks.reduce(0) { runningTotal, bank in
+      let maxJoltage = findMaxJoltage(bank: bank, minLength: 12)
+      return runningTotal + maxJoltage
+    }
   }
 }

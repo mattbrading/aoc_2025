@@ -21,43 +21,29 @@ struct Day02: AdventDay {
 
     let ranges = parseInput(input: input)
 
-    var total = 0
-
-    for id in possibleIds {
-      for range in ranges {
-        if range.contains(id) {
-          total += id
-        }
+    return possibleIds.reduce(0) {outerTotal, id in 
+      outerTotal + ranges.reduce(0) {innerTotal, range in 
+        range.contains(id) ? innerTotal + id : innerTotal
       }
     }
-    
-    return total
   }
 
   func part2(input: String) -> Int {
 
-    var possibleIds = Set<Int>()
-
-    (1...99999).forEach({ base in
-    (2...5).forEach({repeats in 
-      let possibleId = repeatElement(String(base), count: repeats).joined()
-      if (possibleId.count <= 10) {
-        possibleIds.insert(Int(possibleId)!)
-      }
-    })})
+    let possibleIds = Set((1...99999).flatMap({ base in
+      let maxRepeats = 10 / (Int(floor(log10(Double(base)))) + 1)
+      return (2...maxRepeats).compactMap({repeats in 
+        let possibleId = repeatElement(String(base), count: repeats).joined()
+        return Int(possibleId)
+      })
+    }))
 
     let ranges = parseInput(input: input)
 
-    var total = 0
-
-    for id in possibleIds {
-      for range in ranges {
-        if range.contains(id) {
-          total += id
-        }
+    return possibleIds.reduce(0) {outerTotal, id in 
+      outerTotal + ranges.reduce(0) {innerTotal, range in 
+        range.contains(id) ? innerTotal + id : innerTotal
       }
     }
-
-    return total
   }
 }

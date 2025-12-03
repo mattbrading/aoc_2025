@@ -15,47 +15,49 @@ struct Day02: AdventDay {
       })
   }
 
+
   func part1(input: String) -> Int {
+    let possibleIds: [Int] = (1...99999).map({ Int(String($0) + String($0))! })
+
     let ranges = parseInput(input: input)
 
-    let sumInvalidIds = ranges.reduce(0) { runningTotal, range in
-      return range.reduce(runningTotal) { runningTotal, id in
-        let idStr = String(id)
+    var total = 0
 
-        let halfway = idStr.index(idStr.startIndex, offsetBy: idStr.count / 2)
-
-        return idStr[..<halfway] == idStr[halfway...] ? runningTotal + id : runningTotal
-
+    for id in possibleIds {
+      for range in ranges {
+        if range.contains(id) {
+          total += id
+        }
       }
     }
-    return sumInvalidIds
+    
+    return total
   }
 
   func part2(input: String) -> Int {
+
+    var possibleIds = Set<Int>()
+
+    (1...99999).forEach({ base in
+    (2...5).forEach({repeats in 
+      let possibleId = repeatElement(String(base), count: repeats).joined()
+      if (possibleId.count <= 10) {
+        possibleIds.insert(Int(possibleId)!)
+      }
+    })})
+
     let ranges = parseInput(input: input)
 
-    let sumInvalidIds = ranges.reduce(0) { runningTotal, range in
-      return range.reduce(runningTotal) { runningTotal, id in
-        let idStr = String(id)
+    var total = 0
 
-        let divisors = (1...idStr.count / 2)
-          .filter({ idStr.count % $0 == 0 })
-
-        let isInvalidId = divisors.contains { divisor in
-          let splitPoint = idStr.index(idStr.startIndex, offsetBy: divisor)
-
-          let repeated = repeatElement(idStr[..<splitPoint], count: idStr.count / divisor)
-            .joined()
-
-          return idStr == repeated
+    for id in possibleIds {
+      for range in ranges {
+        if range.contains(id) {
+          total += id
         }
-
-        return isInvalidId
-          ? runningTotal + id
-          : runningTotal
       }
     }
 
-    return sumInvalidIds
+    return total
   }
 }

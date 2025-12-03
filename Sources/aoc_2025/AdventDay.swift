@@ -16,7 +16,7 @@ extension AdventDay {
 
   mutating func run() throws {
     let inputFileURL = URL(fileURLWithPath: inputFile)
-    let input = try String(contentsOf: inputFileURL)
+    let input = try String(contentsOf: inputFileURL, encoding: .utf8)
 
     let clock = ContinuousClock()
 

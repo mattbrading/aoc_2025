@@ -7,7 +7,7 @@ private struct Location: Hashable, CustomDebugStringConvertible {
 
   var debugDescription: String { "(\(row), \(col))" }
 
-  var neighbours: [Location] {
+  var neighbours: Set<Location> {
     [
       Location(row: row - 1, col: col - 1),
       Location(row: row - 1, col: col),
@@ -39,19 +39,19 @@ struct Day04: AdventDay {
     let rolls = parseInput(input: input)
 
     return rolls.filter({ roll in
-      roll.neighbours.filter({ rolls.contains($0) }).count < 4
+       roll.neighbours.intersection(rolls).count < 4
     }).count
   }
 
   private func checkRolls(rolls: Set<Location>, toCheck: Set<Location>? = nil) -> Int {
     let toRemove = (toCheck ?? rolls).filter({ roll in
-      roll.neighbours.filter({ rolls.contains($0) }).count < 4
+      roll.neighbours.intersection(rolls).count < 4
     })
 
     if toRemove.isEmpty { return 0 }
 
     let newMap = rolls.subtracting(toRemove)
-    let toCheck = Set(toRemove.flatMap({ $0.neighbours }).filter({ newMap.contains($0) }))
+    let toCheck = Set(toRemove.flatMap({ $0.neighbours })).intersection(newMap)
 
     return toRemove.count + checkRolls(rolls: newMap, toCheck: toCheck)
   }

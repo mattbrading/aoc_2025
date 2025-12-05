@@ -1,0 +1,56 @@
+{
+	"Advent Day Template": {
+		"scope": "swift",
+		"prefix": "adventday",
+		"description": "Create a Swift Advent of Code day file",
+		"isFileTemplate": true,
+		"body": [
+			"import ArgumentParser",
+			"import Foundation",
+			"",
+			"struct Day${TM_FILENAME_BASE/[^0-9]+//g}: AdventDay {",
+			"  static let configuration = CommandConfiguration(commandName: \"day${TM_FILENAME_BASE/([^0-9]+)//g}\")",
+			"",
+			"  @Argument() var inputFile: String",
+			"",
+			"  func part1(input: String) -> Int {",
+			"    0",
+			"  }",
+			"",
+			"  func part2(input: String) -> Int {",
+			"    0",
+			"  }",
+			"}"
+		]
+	},
+	"Advent Day Test Template": {
+		"scope": "swift",
+		"prefix": "adventdaytests",
+		"description": "Create a Swift test file for an Advent day",
+		"isFileTemplate": true,
+		"body": [
+			"import Testing",
+			"",
+			"@testable import aoc_2025",
+			"",
+			"@Suite(\"Day ${TM_FILENAME_BASE/[^0-9]+//g} Tests\")",
+			"struct Day${TM_FILENAME_BASE/[^0-9]+//g}Tests {",
+			"",
+			"  let exampleInput = \"\"\"",
+			"    \"\"\"",
+			"",
+			"  @Test func part1() async throws {",
+			"    let result = Day${TM_FILENAME_BASE/[^0-9]+//g}().part1(input: exampleInput)",
+			"",
+			"    #expect(result == 0)",
+			"  }",
+			"",
+			"  @Test func part2() async throws {",
+			"    let result = Day${TM_FILENAME_BASE/[^0-9]+//g}().part2(input: exampleInput)",
+			"",
+			"    #expect(result == 0)",
+			"  }",
+			"}"
+		]
+	}
+}

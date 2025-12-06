@@ -30,6 +30,37 @@ struct Day06: AdventDay {
   }
 
   func part2(input: String) -> Int {
-    0
+    let rows = input.split(separator: "\n").map({ String($0) })
+
+    let cols = rows.first!.indices.map({ idx in
+      rows.map({ $0[idx] })
+    })
+
+    typealias ReduceState = (Int, Int?, Character?)
+
+    let result = cols.reduce(ReduceState(0, nil, nil)) {
+      (state: ReduceState, col: [Character]) -> ReduceState in
+
+      var (total, runningTotal, method) = state
+
+      let colStr = String(col.filter({ $0.isNumber }))
+
+      if colStr.isEmpty {
+        return (total + (runningTotal ?? 0), nil, nil)
+      }
+
+      let num = Int(colStr)!
+
+      method = method ?? col.last!
+
+      runningTotal =
+        method == "+"
+        ? (runningTotal ?? 0) + num
+        : (runningTotal ?? 1) * num
+
+      return (total, runningTotal, method)
+    }
+
+    return result.0 + (result.1 ?? 0)
   }
 }

@@ -23,6 +23,11 @@ extension Substring {
 
 }
 
+private struct BeamDepth: Hashable {
+  let beam: Int
+  let depth: Int
+}
+
 struct Day07: AdventDay {
   static let configuration = CommandConfiguration(commandName: "day7")
 
@@ -54,6 +59,32 @@ struct Day07: AdventDay {
   }
 
   func part2(input: String) -> Int {
-    0
+    let lines = input.split(separator: "\n")
+
+    let startPoint = lines.first!.getRelativeOffset(of: "S")!
+
+    var timelineCache: [BeamDepth: Int] = [:]
+
+    func countTimelines(beam: Int, depth: Int) -> Int {
+      if !lines.indices.contains(depth) { return 1 }
+
+      if let cached = timelineCache[BeamDepth(beam: beam, depth: depth)] {
+        return cached
+      }
+
+      let line = lines[depth]
+
+      let timeLines =
+        line.getCharacterAtOffset(of: beam) == "^"
+        ? countTimelines(beam: beam - 1, depth: depth + 1)
+          + countTimelines(beam: beam + 1, depth: depth + 1)
+        : countTimelines(beam: beam, depth: depth + 1)
+
+      timelineCache[BeamDepth(beam: beam, depth: depth)] = timeLines
+
+      return timeLines
+    }
+
+    return countTimelines(beam: startPoint, depth: 1)
   }
 }

@@ -37,6 +37,6 @@ struct Day08Tests {
   @Test func part2() async throws {
     let result = Day08().part2(input: exampleInput)
 
-    #expect(result == 0)
+    #expect(result == 25272)
   }
 }

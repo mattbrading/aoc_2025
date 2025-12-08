@@ -30,14 +30,12 @@ struct Day08: AdventDay {
 
   @Argument() var inputFile: String
 
-  func part1(input: String) -> Int {
-    part1(input: input, maxPairs: 1000)
+  fileprivate func parseInput (input: String) -> [Point] {
+    input.split(separator: "\n")
+      .map({ Point(fromString: $0) })
   }
 
-  func part1(input: String, maxPairs: Int) -> Int {
-    let points = input.split(separator: "\n")
-      .map({ Point(fromString: $0) })
-
+  fileprivate func getDistances(points: [Point]) -> OrderedDictionary<Double, (Point, Point)> {
     var distances = OrderedDictionary<Double, (Point, Point)>()
 
     points.enumerated().forEach({ index, point in
@@ -46,11 +44,11 @@ struct Day08: AdventDay {
 
     distances.sort()
 
-    let closestPairs = distances.keys[..<maxPairs]
-      .map({ distances[$0]! })
+    return distances
+  }
 
-    let circuits: [Set<Point>] = closestPairs.reduce([]) { circuits, pair in
-      var newCircuit = Set([pair.0, pair.1])
+  fileprivate func findNewCircuits(newPair: (Point, Point), circuits: [Set<Point>]) -> [Set<Point>] {
+      var newCircuit = Set([newPair.0, newPair.1])
 
       circuits.filter({ !$0.isDisjoint(with: newCircuit) })
         .forEach({ newCircuit.formUnion($0) })
@@ -60,12 +58,39 @@ struct Day08: AdventDay {
       newCircuits.append(newCircuit)
 
       return newCircuits
+  }
+
+  func part1(input: String) -> Int {
+    part1(input: input, maxPairs: 1000)
+  }
+
+  func part1(input: String, maxPairs: Int) -> Int {
+    let points = parseInput(input: input)
+    let distances = getDistances(points: points)
+
+    let closestPairs = distances.keys[..<maxPairs]
+      .map({ distances[$0]! })
+
+    let circuits: [Set<Point>] = closestPairs.reduce([]) { circuits, pair in
+      findNewCircuits(newPair: pair, circuits: circuits)
     }
 
     return circuits.map({ $0.count }).sorted().reversed()[0..<3].reduce(1) { $0 * $1 }
   }
 
   func part2(input: String) -> Int {
-    0
+    let points = parseInput(input: input)
+    var distances = getDistances(points: points)
+
+    var circuits: [ Set<Point> ] = []
+    var lastPair: (Point, Point)? = nil
+
+    while (circuits.first?.count != points.count) {
+      (_, lastPair) = distances.removeFirst()
+
+      circuits = findNewCircuits(newPair: lastPair!, circuits: circuits)
+    }
+
+    return Int(lastPair!.0.x) * Int(lastPair!.1.x)
   }
 }

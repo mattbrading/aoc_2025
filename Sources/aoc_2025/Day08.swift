@@ -25,6 +25,20 @@ private struct Point: Hashable, CustomDebugStringConvertible {
   }
 }
 
+private struct Distances {
+  var distances: Heap<Double> = Heap()
+  var map: [Double: (Point, Point)] = [:]
+
+  mutating func insert(distance: Double, pair: (Point, Point)) {
+    distances.insert(distance)
+    map[distance] = pair
+  }
+
+  mutating func getNextClosest() -> (Point, Point) {
+    return self.map[self.distances.removeMin()]!
+  }
+}
+
 struct Day08: AdventDay {
   static let configuration = CommandConfiguration(commandName: "day8")
 
@@ -35,14 +49,14 @@ struct Day08: AdventDay {
       .map({ Point(fromString: $0) })
   }
 
-  fileprivate func getDistances(points: [Point]) -> OrderedDictionary<Double, (Point, Point)> {
-    var distances = OrderedDictionary<Double, (Point, Point)>()
+  fileprivate func getDistances(points: [Point]) -> Distances {
+    var distances = Distances()
 
     points.enumerated().forEach({ index, point in
-      points[(index + 1)...].forEach({ distances[point.distance(from: $0)] = (point, $0) })
+      points[(index + 1)...].forEach({
+        distances.insert(distance: point.distance(from: $0), pair: (point, $0))
+      })
     })
-
-    distances.sort()
 
     return distances
   }
@@ -66,10 +80,9 @@ struct Day08: AdventDay {
 
   func part1(input: String, maxPairs: Int) -> Int {
     let points = parseInput(input: input)
-    let distances = getDistances(points: points)
+    var distances = getDistances(points: points)
 
-    let closestPairs = distances.keys[..<maxPairs]
-      .map({ distances[$0]! })
+    let closestPairs = (0..<maxPairs).map({ _ in distances.getNextClosest() })
 
     let circuits: [Set<Point>] = closestPairs.reduce([]) { circuits, pair in
       findNewCircuits(newPair: pair, circuits: circuits)
@@ -86,7 +99,7 @@ struct Day08: AdventDay {
     var lastPair: (Point, Point)? = nil
 
     while (circuits.first?.count != points.count) {
-      (_, lastPair) = distances.removeFirst()
+      lastPair = distances.getNextClosest()
 
       circuits = findNewCircuits(newPair: lastPair!, circuits: circuits)
     }

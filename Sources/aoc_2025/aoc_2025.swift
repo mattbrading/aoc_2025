@@ -15,6 +15,7 @@ struct AoC2025: ParsableCommand {
       Day06.self,
       Day07.self,
       Day08.self,
+      Day09.self,
     ]
   )
 }

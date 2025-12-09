@@ -23,6 +23,12 @@ struct Day09: AdventDay {
       })
   }
 
+  fileprivate func compressRange(_ input: [Int]) -> [Int: Int] {
+    Dictionary(uniqueKeysWithValues: Set(input).sorted().enumerated().map({ idx, value in 
+      (value, idx)
+    }))
+  }
+
   func part1(input: String) -> Int {
     let points = parseInput(input: input)
 
@@ -36,13 +42,18 @@ struct Day09: AdventDay {
   func part2(input: String) -> Int {
     let points = parseInput(input: input)
 
-    var rows: [Int: RangeSet<Int>] = points.enumerated().reduce([:]) { rows, point in
+    let cRows = compressRange(points.map({ $0.row }))
+    let cCols = compressRange(points.map({ $0.col }))
+
+    let compressedPoints = points.map({ Point(col: cCols[$0.col]!, row: cRows[$0.row]!) })
+
+    var rows: [Int: RangeSet<Int>] = compressedPoints.enumerated().reduce([:]) { rows, point in
       var rows = rows
 
       let (idx, point) = point
 
-      let nextIdx = idx == (points.endIndex - 1) ? 0 : idx + 1
-      let nextPoint = points[nextIdx]
+      let nextIdx = idx == (compressedPoints.endIndex - 1) ? 0 : idx + 1
+      let nextPoint = compressedPoints[nextIdx]
 
       (min(point.row, nextPoint.row)...max(point.row, nextPoint.row)).forEach({ row in
         rows[row] = rows[row] ?? RangeSet()
@@ -64,15 +75,18 @@ struct Day09: AdventDay {
         let rowRange = (min(pointA.row, pointB.row)..<max(pointA.row, pointB.row)+1)
         let colRange = (min(pointA.col, pointB.col)..<max(pointA.col, pointB.col)+1)
         let area = rowRange.count * colRange.count
+
+        let compressedRowRange = cRows[rowRange.lowerBound]!..<cRows[rowRange.upperBound-1]!+1
+        let compressedColRange = cCols[colRange.lowerBound]!..<cCols[colRange.upperBound-1]!+1
         
-        return (area, rowRange, colRange)
+        return (area, compressedRowRange, compressedColRange)
       })
     })
 
     return areas.sorted(by: { $0.0 > $1.0 }).first(where: { _, rowRange, colRange in
       rows[rowRange.lowerBound]!.isSuperset(of: RangeSet(colRange)) &&
       rows[rowRange.upperBound - 1]!.isSuperset(of: RangeSet(colRange)) &&
-      rowRange.allSatisfy({ rows[$0]!.contains(colRange.lowerBound) && rows[$0]!.contains(colRange.upperBound - 1)})
+      rowRange.allSatisfy({ rows[$0]!.isSuperset(of: RangeSet(colRange))})
     })!.0
   }
 }

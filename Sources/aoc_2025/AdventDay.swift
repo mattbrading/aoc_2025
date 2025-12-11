@@ -27,11 +27,12 @@ extension AdventDay {
       part1result = part1(input: input)
     }
 
+    print("Part 1: \(part1result!), Time: \(part1time)")
+
     let part2time = clock.measure {
       part2result = part2(input: input)
     }
 
-    print("Part 1: \(part1result!), Time: \(part1time)")
     print("Part 2: \(part2result!), Time: \(part2time)")
   }
 

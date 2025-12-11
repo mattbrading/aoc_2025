@@ -67,6 +67,30 @@ struct Day10: AdventDay {
   }
 
   func part2(input: String) -> Int {
-    0
+
+    let machines = parseInput(input: input)
+
+    return machines.reduce(0) { runningTotal, machine in
+
+      let wiresByButton = machine.joltage.indices.map({ idx in
+        machine.buttons.count(where: { $0.contains(idx) })
+      })
+
+      print("wires", wiresByButton)
+
+      let buttonMaxPresses = machine.buttons.map({ button in
+        button.map({ machine.joltage[$0] }).min()!
+      })
+
+      print("maxPresses", buttonMaxPresses)
+
+      let buttonMinPresses = machine.buttons.map({ button in
+        button.map({ wiresByButton[$0] == 1 ? machine.joltage[$0] : 0 }).max()!
+      })
+
+      print("minPresses", buttonMinPresses)
+
+      return runningTotal
+    }
   }
 }

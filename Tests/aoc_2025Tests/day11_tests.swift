@@ -24,9 +24,25 @@ struct Day11Tests {
     #expect(result == 5)
   }
 
-  @Test func part2() async throws {
-    let result = Day11().part2(input: exampleInput)
+  let examplePart2 = """
+    svr: aaa bbb
+    aaa: fft
+    fft: ccc
+    bbb: tty
+    tty: ccc
+    ccc: ddd eee
+    ddd: hub
+    hub: fff
+    eee: dac
+    dac: fff
+    fff: ggg hhh
+    ggg: out
+    hhh: out
+    """
 
-    #expect(result == 0)
+  @Test func part2() async throws {
+    let result = Day11().part2(input: examplePart2)
+
+    #expect(result == 2)
   }
 }

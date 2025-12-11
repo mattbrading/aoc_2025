@@ -24,9 +24,10 @@ struct Day09: AdventDay {
   }
 
   fileprivate func compressRange(_ input: [Int]) -> [Int: Int] {
-    Dictionary(uniqueKeysWithValues: Set(input).sorted().enumerated().map({ idx, value in 
-      (value, idx)
-    }))
+    Dictionary(
+      uniqueKeysWithValues: Set(input).sorted().enumerated().map({ idx, value in
+        (value, idx)
+      }))
   }
 
   func part1(input: String) -> Int {
@@ -57,14 +58,16 @@ struct Day09: AdventDay {
 
       (min(point.row, nextPoint.row)...max(point.row, nextPoint.row)).forEach({ row in
         rows[row] = rows[row] ?? RangeSet()
-        rows[row]!.insert(contentsOf: (min(point.col, nextPoint.col)..<(max(point.col, nextPoint.col) + 1)))
+        rows[row]!.insert(
+          contentsOf: (min(point.col, nextPoint.col)..<(max(point.col, nextPoint.col) + 1)))
       })
       return rows
     }
 
-    rows.forEach({ key, value in 
+    rows.forEach({ key, value in
       let filledRow = stride(from: 0, to: value.ranges.count, by: 2).map({ idx in
-        idx + 1 == value.ranges.count ? value.ranges[idx] : value.ranges[idx].lowerBound..<value.ranges[idx+1].upperBound
+        idx + 1 == value.ranges.count
+          ? value.ranges[idx] : value.ranges[idx].lowerBound..<value.ranges[idx + 1].upperBound
       })
 
       rows[key] = RangeSet(filledRow)
@@ -72,21 +75,21 @@ struct Day09: AdventDay {
 
     let areas = points.enumerated().flatMap({ idx, pointA in
       points[(idx + 1)...].compactMap({ pointB in
-        let rowRange = (min(pointA.row, pointB.row)..<max(pointA.row, pointB.row)+1)
-        let colRange = (min(pointA.col, pointB.col)..<max(pointA.col, pointB.col)+1)
+        let rowRange = (min(pointA.row, pointB.row)..<max(pointA.row, pointB.row) + 1)
+        let colRange = (min(pointA.col, pointB.col)..<max(pointA.col, pointB.col) + 1)
         let area = rowRange.count * colRange.count
 
-        let compressedRowRange = cRows[rowRange.lowerBound]!..<cRows[rowRange.upperBound-1]!+1
-        let compressedColRange = cCols[colRange.lowerBound]!..<cCols[colRange.upperBound-1]!+1
-        
+        let compressedRowRange = cRows[rowRange.lowerBound]!..<cRows[rowRange.upperBound - 1]! + 1
+        let compressedColRange = cCols[colRange.lowerBound]!..<cCols[colRange.upperBound - 1]! + 1
+
         return (area, compressedRowRange, compressedColRange)
       })
     })
 
     return areas.sorted(by: { $0.0 > $1.0 }).first(where: { _, rowRange, colRange in
-      rows[rowRange.lowerBound]!.isSuperset(of: RangeSet(colRange)) &&
-      rows[rowRange.upperBound - 1]!.isSuperset(of: RangeSet(colRange)) &&
-      rowRange.allSatisfy({ rows[$0]!.isSuperset(of: RangeSet(colRange))})
+      rows[rowRange.lowerBound]!.isSuperset(of: RangeSet(colRange))
+        && rows[rowRange.upperBound - 1]!.isSuperset(of: RangeSet(colRange))
+        && rowRange.allSatisfy({ rows[$0]!.isSuperset(of: RangeSet(colRange)) })
     })!.0
   }
 }

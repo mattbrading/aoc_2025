@@ -27,16 +27,17 @@ struct Day03Tests {
   @Test func part2() async throws {
     let result = Day03().part2(input: exampleInput)
 
-    #expect(result == 3121910778619)
+    #expect(result == 3_121_910_778_619)
   }
 
-
-  @Test("Part 2 - Line by Line", arguments: [
-    ("987654321111111", 987654321111),
-    ("811111111111119", 811111111119),
-    ("234234234234278", 434234234278),
-    ("818181911112111", 888911112111),
-  ])
+  @Test(
+    "Part 2 - Line by Line",
+    arguments: [
+      ("987654321111111", 987_654_321_111),
+      ("811111111111119", 811_111_111_119),
+      ("234234234234278", 434_234_234_278),
+      ("818181911112111", 888_911_112_111),
+    ])
   func part2_specific(_ args: (String, Int)) async throws {
     let result = Day03().part2(input: args.0)
 

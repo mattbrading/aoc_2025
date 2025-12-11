@@ -39,7 +39,7 @@ struct Day04: AdventDay {
     let rolls = parseInput(input: input)
 
     return rolls.filter({ roll in
-       roll.neighbours.intersection(rolls).count < 4
+      roll.neighbours.intersection(rolls).count < 4
     }).count
   }
 

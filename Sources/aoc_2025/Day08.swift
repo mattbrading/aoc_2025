@@ -44,7 +44,7 @@ struct Day08: AdventDay {
 
   @Argument() var inputFile: String
 
-  fileprivate func parseInput (input: String) -> [Point] {
+  fileprivate func parseInput(input: String) -> [Point] {
     input.split(separator: "\n")
       .map({ Point(fromString: $0) })
   }
@@ -61,17 +61,18 @@ struct Day08: AdventDay {
     return distances
   }
 
-  fileprivate func findNewCircuits(newPair: (Point, Point), circuits: [Set<Point>]) -> [Set<Point>] {
-      var newCircuit = Set([newPair.0, newPair.1])
+  fileprivate func findNewCircuits(newPair: (Point, Point), circuits: [Set<Point>]) -> [Set<Point>]
+  {
+    var newCircuit = Set([newPair.0, newPair.1])
 
-      circuits.filter({ !$0.isDisjoint(with: newCircuit) })
-        .forEach({ newCircuit.formUnion($0) })
+    circuits.filter({ !$0.isDisjoint(with: newCircuit) })
+      .forEach({ newCircuit.formUnion($0) })
 
-      var newCircuits = circuits.filter({ $0.isDisjoint(with: newCircuit) })
+    var newCircuits = circuits.filter({ $0.isDisjoint(with: newCircuit) })
 
-      newCircuits.append(newCircuit)
+    newCircuits.append(newCircuit)
 
-      return newCircuits
+    return newCircuits
   }
 
   func part1(input: String) -> Int {
@@ -95,10 +96,10 @@ struct Day08: AdventDay {
     let points = parseInput(input: input)
     var distances = getDistances(points: points)
 
-    var circuits: [ Set<Point> ] = []
+    var circuits: [Set<Point>] = []
     var lastPair: (Point, Point)? = nil
 
-    while (circuits.first?.count != points.count) {
+    while circuits.first?.count != points.count {
       lastPair = distances.getNextClosest()
 
       circuits = findNewCircuits(newPair: lastPair!, circuits: circuits)

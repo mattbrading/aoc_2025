@@ -19,11 +19,8 @@ struct Day12: AdventDay {
     let validRegions = regions.filter { region in
       let sections = region.split(separator: ": ", maxSplits: 1)
 
-      let dimensions = sections.first!.split(separator: "x").compactMap({ Int($0) })
-
-      let width = dimensions.first!
-      let height = dimensions.last!
-      let area = width * height
+      let area = sections.first!.split(separator: "x").compactMap({ Int($0) })
+        .reduce(1) { $0 * $1 }
 
       let presentsCounts = sections.last!.components(separatedBy: .whitespaces).compactMap({
         Int($0)
@@ -32,8 +29,6 @@ struct Day12: AdventDay {
       let presentsArea = presentsCounts.enumerated().reduce(0) { total, current in
         total + (presents[current.offset] * current.element)
       }
-
-      print(area, presentsArea)
 
       return area > presentsArea
     }

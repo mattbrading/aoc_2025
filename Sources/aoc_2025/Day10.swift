@@ -71,26 +71,33 @@ struct Day10: AdventDay {
     let machines = parseInput(input: input)
 
     return machines.reduce(0) { runningTotal, machine in
+      let args = machine.buttons.indices.map({ "n\($0)" })
 
-      let wiresByButton = machine.joltage.indices.map({ idx in
-        machine.buttons.count(where: { $0.contains(idx) })
+      var z3Input: [String] = []
+
+      // Variables
+      args.forEach({ z3Input.append("(declare-fun \($0) () Int)") })
+
+      // Assertions
+      args.forEach({ z3Input.append("(assert (>= \($0) 0))") })
+      machine.joltage.enumerated().forEach({ jIdx, joltage in
+        let buttons = machine.buttons.enumerated().compactMap({ bIdx, button in
+          button.contains(jIdx) ? args[bIdx] : nil
+        })
+
+        z3Input.append("(assert (= (+ \(buttons.joined(separator: " "))) \(joltage)))")
       })
 
-      print("wires", wiresByButton)
+      z3Input.append("(minimize (+ \(args.joined(separator: " "))))")
 
-      let buttonMaxPresses = machine.buttons.map({ button in
-        button.map({ machine.joltage[$0] }).min()!
-      })
+      z3Input.append("(check-sat)")
+      z3Input.append("(get-model)")
 
-      print("maxPresses", buttonMaxPresses)
+      print("(push)")
+      print(z3Input.joined(separator: "\n"))
+      print("(pop)")
 
-      let buttonMinPresses = machine.buttons.map({ button in
-        button.map({ wiresByButton[$0] == 1 ? machine.joltage[$0] : 0 }).max()!
-      })
-
-      print("minPresses", buttonMinPresses)
-
-      return runningTotal
+      return 0
     }
   }
 }

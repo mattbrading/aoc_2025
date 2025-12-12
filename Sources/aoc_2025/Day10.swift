@@ -11,12 +11,12 @@ private struct Machine {
 func invokeZ3(input: String) async throws -> Int {
   let result = try await run(
     .name("z3"), arguments: ["-in"], input: .string(input), output: .string(limit: 4096))
-  
+
   let lines = result.standardOutput!.components(separatedBy: .newlines)
     .compactMap({ line in
       let match = try! /^\s+([0-9]+)\)$/.firstMatch(in: line)?.output.1
       return match != nil ? Int(match!) : nil
-     })
+    })
 
   return lines.reduce(0) { $0 + $1 }
 }
@@ -25,7 +25,7 @@ struct Day10: AsyncAdventDay {
   static let configuration = CommandConfiguration(commandName: "day10")
 
   @Argument() var inputFile: String
-  
+
   fileprivate func parseInput(input: String) -> [Machine] {
     input.components(separatedBy: .newlines).map({ line in
       let parts = line.components(separatedBy: .whitespaces)

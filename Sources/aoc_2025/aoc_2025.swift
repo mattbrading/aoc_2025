@@ -1,7 +1,7 @@
 import ArgumentParser
 
 @main
-struct AoC2025: ParsableCommand {
+struct AoC2025: AsyncParsableCommand {
 
   static let configuration = CommandConfiguration(
     commandName: "aoc_2025",

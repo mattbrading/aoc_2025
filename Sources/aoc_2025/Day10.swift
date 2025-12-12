@@ -1,5 +1,6 @@
 import ArgumentParser
 import Foundation
+import Subprocess
 
 private struct Machine {
   let target: [Int: Bool]
@@ -7,11 +8,24 @@ private struct Machine {
   let joltage: [Int]
 }
 
-struct Day10: AdventDay {
+func invokeZ3(input: String) async throws -> Int {
+  let result = try await run(
+    .name("z3"), arguments: ["-in"], input: .string(input), output: .string(limit: 4096))
+  
+  let lines = result.standardOutput!.components(separatedBy: .newlines)
+    .compactMap({ line in
+      let match = try! /^\s+([0-9]+)\)$/.firstMatch(in: line)?.output.1
+      return match != nil ? Int(match!) : nil
+     })
+
+  return lines.reduce(0) { $0 + $1 }
+}
+
+struct Day10: AsyncAdventDay {
   static let configuration = CommandConfiguration(commandName: "day10")
 
   @Argument() var inputFile: String
-
+  
   fileprivate func parseInput(input: String) -> [Machine] {
     input.components(separatedBy: .newlines).map({ line in
       let parts = line.components(separatedBy: .whitespaces)
@@ -66,11 +80,13 @@ struct Day10: AdventDay {
     }
   }
 
-  func part2(input: String) -> Int {
+  func part2(input: String) async -> Int {
 
     let machines = parseInput(input: input)
 
-    return machines.reduce(0) { runningTotal, machine in
+    var result = 0
+
+    for machine in machines {
       let args = machine.buttons.indices.map({ "n\($0)" })
 
       var z3Input: [String] = []
@@ -93,11 +109,12 @@ struct Day10: AdventDay {
       z3Input.append("(check-sat)")
       z3Input.append("(get-model)")
 
-      print("(push)")
-      print(z3Input.joined(separator: "\n"))
-      print("(pop)")
+      let buttonPresses = try! await invokeZ3(input: z3Input.joined(separator: "\n"))
 
-      return 0
+      result += buttonPresses
+
     }
+
+    return result
   }
 }
